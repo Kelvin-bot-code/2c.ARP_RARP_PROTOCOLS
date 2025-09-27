@@ -1,6 +1,6 @@
 # 2c.SIMULATING ARP /RARP PROTOCOLS
 ## AIM
-To write a python program for simulating ARP protocols using TCP.
+To write a python program for simulating ARP/RARP protocols using TCP.
 ## ALGORITHM:
 ## Client:
 1. Start the program
@@ -17,114 +17,69 @@ stored.
 5. Map the IP address with its MAC address and return the MAC address to client.
 P
 ## PROGRAM - ARP
-## server
+## CLIENT
+``` py
+import socket 
+s=socket.socket() 
+s.bind(('localhost',8000)) 
+s.listen(5) 
+c,addr=s.accept() 
+address={
+"165.165.80.80":"6A:08:AA:C2",
+"165.165.79.1":"8A:BC:E3:FA"
+}; 
+while True: 
+            ip=c.recv(1024).decode() 
+            try: 
+                c.send(address[ip].encode()) 
+            except KeyError: 
+                c.send("Not Found".encode())
 ```
-import socket
-s = socket.socket()
-s.bind(('localhost', 8000))
-s.listen(5)
-print("Server is listening...")
-
-c, addr = s.accept()
-print(f"Connection established with {addr}")
-
-address = {
-    "165.165.80.80": "6A:08:AA:C2",
-    "165.165.79.1": "8A:BC:E3:FA"
-}
-
+### SERVER
+```py
+import socket 
+s=socket.socket() 
+s.connect(('localhost',8000)) 
 while True:
-    ip = c.recv(1024).decode()
-
-    if not ip:  
-        break
-
-    try:
-        mac = address[ip]  # Get the MAC address for the IP
-        print(f"IP: {ip} -> MAC: {mac}")
-        c.send(mac.encode())  
-    except KeyError:
-        print(f"IP: {ip} not found in ARP table.")
-        c.send("Not Found".encode())
-c.close()
-s.close()
-```
-## client
-```
-import socket
-c = socket.socket()
-c.connect(('localhost', 8000))
-
-while True:
-    ip = input("Enter IP address to find MAC (or type 'exit' to quit): ")
-
-    if ip.lower() == "exit":  
-        break
-
-    c.send(ip.encode())
-    mac = c.recv(1024).decode()
-    print(f"MAC Address for {ip}: {mac}")
-c.close()
-
+    ip=input("Enter logical Address : ") 
+    s.send(ip.encode()) 
+    print("MAC Address",s.recv(1024).decode())
 ```
 ## OUPUT - ARP
-#sever
-<img width="836" height="334" alt="image" src="https://github.com/user-attachments/assets/cc13434c-c9f3-4dd8-9ab4-75c3a7440107" />
+<img width="1919" height="1141" alt="image" src="https://github.com/user-attachments/assets/79e8dfa0-159c-4cd0-9724-ad0b61ce9909" />
 
-## client
-<img width="836" height="335" alt="image" src="https://github.com/user-attachments/assets/cfc3b881-63ab-483a-b10e-314071f75e9d" />
+
 
 ## PROGRAM - RARP
-## sever
+## CLIENT
 ```py
 import socket
-s = socket.socket()
-s.bind(('localhost', 8000))
+s=socket.socket()
+s.bind(('localhost',8000))
 s.listen(5)
-print("Server is listening for RARP requests...")
-c, addr = s.accept()
-print(f"Connection established with {addr}")
-
-rarp_table = {
-    "6A:08:AA:C2": "165.165.80.80",
-    "8A:BC:E3:FA": "165.165.79.1"
-}
-
+c,addr=s.accept()
+address={"68:34:21:81:82:C9":"172.20.10.2"}
 while True:
-    mac = c.recv(1024).decode()
-
-    if not mac:  
-        break
-
+    ip=c.recv(1024).decode()
     try:
-        ip = rarp_table[mac]  
-        print(f"MAC: {mac} -> IP: {ip}")
-        c.send(ip.encode())  
+        c.send(address[ip].encode())
     except KeyError:
-        print(f"MAC: {mac} not found in RARP table.")
         c.send("Not Found".encode())
-c.close()
-s.close()
 ```
-## client
+## SERVER
 ```py
 import socket
-c = socket.socket()
-c.connect(('localhost', 8000))
-
+s=socket.socket()
+s.connect(('localhost',8000))
 while True:
-    mac = input("Enter MAC address to find IP (or type 'exit' to quit): ")
-    if mac.lower() == "exit":  
-        break
-    c.send(mac.encode())
-    ip = c.recv(1024).decode()
-    print(f"IP Address for {mac}: {ip}")
-c.close()
+    ip=input("Enter MAC Address : ")
+    s.send(ip.encode())
+    print("Logical Address",s.recv(1024).decode())
 ```
 ## OUPUT -RARP
-<img width="1916" height="1134" alt="Screenshot 2025-09-24 182921" src="https://github.com/user-attachments/assets/60999814-9de1-4837-a497-776729009309" />
+<img width="1919" height="1199" alt="image" src="https://github.com/user-attachments/assets/c4872985-770c-4d7f-bd11-500b1527e4a1" />
 
 
 ## RESULT
-Thus, the python program for simulating ARP protocols using TCP was successfully 
+Thus, the python program for simulating ARP/RARP protocols using TCP was successfully 
 executed.
